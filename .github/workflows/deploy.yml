@@ -42,6 +42,8 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
-      - name: Terraform Apply (for pushes to main)
-        if: github.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve tfplan
+      - name: Terraform Apply Network and Cluster
+        run: terraform apply -target=module.eks_cluster -target=module.eks_network -target=module.eks_managed_node_group -auto-approve tfplan
+
+      - name: Terraform Apply K8s
+        run: terraform apply -target=module.k8s -auto-approve tfplan
