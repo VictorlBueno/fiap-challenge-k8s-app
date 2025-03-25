@@ -30,11 +30,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Set KUBERNETES variables
+      - name: Set KUBERNETES environment variables from GitHub Secrets
         run: |
-          export KUBE_HOST=$(aws eks --region ${{ secrets.AWS_REGION }} describe-cluster --name fiap-challenge-cluster --query "cluster.endpoint" --output text)
-          export KUBE_CA_CERT=$(aws eks --region ${{ secrets.AWS_REGION }} describe-cluster --name fiap-challenge-cluster --query "cluster.certificateAuthority.data" --output text)
-          export KUBE_TOKEN=$(aws eks --region ${{ secrets.AWS_DEFAULT_REGION }} get-token --cluster-name fiap-challenge-cluster --query "status.token" --output text)
+          export KUBE_HOST=${{ secrets.KUBE_HOST }}
+          export KUBE_CA_CERT=${{ secrets.KUBE_CA_CERT }}
+          export KUBE_TOKEN=${{ secrets.KUBE_TOKEN }}
 
       - name: Terraform Init
         run: terraform init
@@ -46,7 +46,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan
+        run: terraform plan -out=tfplan -var="KUBE_HOST=${{ secrets.KUBE_HOST }}" -var="KUBE_CA_CERT=${{ secrets.KUBE_CA_CERT }}" -var="KUBE_TOKEN=${{ secrets.KUBE_TOKEN }}"
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
