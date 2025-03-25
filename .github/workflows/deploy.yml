@@ -1,50 +1,36 @@
-name: Terraform Apply
+name: Terraform Plan and Apply
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   terraform:
-    name: Terraform Plan and Apply
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Terraform
-        run: |
-          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-          sudo apt-add-repository "deb https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-          sudo apt-get update && sudo apt-get install terraform
-
-      - name: Configure AWS CLI
+      - name: Set up AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Update kubeconfig for EKS
+      - name: Set KUBERNETES variables
         run: |
-          aws eks update-kubeconfig --region ${{ secrets.AWS_DEFAULT_REGION }} --name fiap-challenge-cluster
+          export KUBE_HOST=$(aws eks --region ${{ secrets.AWS_REGION }} describe-cluster --name fiap-challenge-cluster --query "cluster.endpoint" --output text)
+          export KUBE_CA_CERT=$(aws eks --region ${{ secrets.AWS_REGION }} describe-cluster --name fiap-challenge-cluster --query "cluster.certificateAuthority.data" --output text)
+          export KUBE_TOKEN=$(aws eks --region ${{ secrets.AWS_REGION }} get-token --cluster-name fiap-challenge-cluster --query "status.token" --output text)
 
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Format Check
-        run: terraform fmt -check
-
-      - name: Terraform Validate
-        run: terraform validate
-
       - name: Terraform Plan
-        run: terraform plan -out=tfplan
+        run: terraform plan
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -auto-approve

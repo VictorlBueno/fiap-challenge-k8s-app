@@ -17,3 +17,7 @@ variable "tags" {
   type        = map(any)
   description = "Tags to be added to all AWS resources"
 }
+
+variable "KUBE_HOST" {}
+variable "KUBE_CA_CERT" {}
+variable "KUBE_TOKEN" {}

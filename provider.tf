@@ -26,23 +26,15 @@ provider "aws" {
 }
 
 provider "kubernetes" {
-  host                   = module.eks_cluster.endpoint
-  cluster_ca_certificate = base64decode(module.eks_cluster.certificate_authority)
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    args        = ["eks", "get-token", "--cluster-name", module.eks_cluster.cluster_name]
-    command     = "aws"
-  }
+  host                   = var.KUBE_HOST
+  cluster_ca_certificate = base64decode(var.KUBE_CA_CERT)
+  token                  = var.KUBE_TOKEN
 }
 
 provider "helm" {
   kubernetes {
-    host                   = module.eks_cluster.endpoint
-    cluster_ca_certificate = base64decode(module.eks_cluster.certificate_authority)
-    exec {
-      api_version = "client.authentication.k8s.io/v1beta1"
-      args        = ["eks", "get-token", "--cluster-name", module.eks_cluster.cluster_name]
-      command     = "aws"
-    }
+    host                   = var.KUBE_HOST
+    cluster_ca_certificate = base64decode(var.KUBE_CA_CERT)
+    token                  = var.KUBE_TOKEN
   }
 }
