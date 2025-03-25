@@ -30,6 +30,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
+      - name: Test AWS EKS authentication
+        run: |
+          aws eks get-token --cluster-name <your-cluster-name> --region ${{ secrets.AWS_DEFAULT_REGION }}
+
       - name: Terraform Init
         run: terraform init
 
