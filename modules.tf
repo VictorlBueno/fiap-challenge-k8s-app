@@ -32,7 +32,7 @@ module "eks_load_balancer_controller" {
 }
 
 module "k8s" {
-  source       = "./modules/k8s"
+  source = "./modules/k8s"
 
   depends_on = [
     module.eks_cluster,
