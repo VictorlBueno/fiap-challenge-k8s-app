@@ -20,6 +20,7 @@ resource "aws_iam_role" "eks_controller_role" {
         }
     ]
 }
+EOF
 
   tags = merge(
     var.tags,

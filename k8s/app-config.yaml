@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: app-config
-  namespace: default
-data:
-  DATABASE_URL: "postgresql://victorfiapchallenge:92ccaf7541dce@terraform-20250325024812209400000001.cpyshgty15ju.us-east-1.rds.amazonaws.com:5432/fiapchallenge"

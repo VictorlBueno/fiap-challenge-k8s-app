@@ -46,19 +46,3 @@ provider "helm" {
     }
   }
 }
-
-resource "kubernetes_manifest" "app_config" {
-  manifest = yamldecode(file("${path.module}/k8s/app-config.yaml"))
-}
-
-resource "kubernetes_manifest" "app_deployment" {
-  manifest = yamldecode(file("${path.module}/k8s/app-deployment.yaml"))
-}
-
-resource "kubernetes_manifest" "app_hpa" {
-  manifest = yamldecode(file("${path.module}/k8s/app-hpa.yaml"))
-}
-
-resource "kubernetes_manifest" "app_service" {
-  manifest = yamldecode(file("${path.module}/k8s/app-service.yaml"))
-}

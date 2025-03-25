@@ -1,5 +1,5 @@
 module "eks_network" {
-  source = "./modules/network"
+  source       = "./modules/network"
   project_name = var.project_name
   cidr_block   = var.cidr_block
   tags         = var.tags
@@ -29,4 +29,15 @@ module "eks_load_balancer_controller" {
   oidc         = module.eks_cluster.oidc
   cluster_name = module.eks_cluster.cluster_name
   vpc_id       = module.eks_network.vpc_id
+}
+
+module "k8s" {
+  source       = "./modules/k8s"
+
+  depends_on = [
+    module.eks_cluster,
+    module.eks_network,
+    module.eks_managed_node_group,
+    module.eks_load_balancer_controller
+  ]
 }
