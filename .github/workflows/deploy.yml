@@ -30,9 +30,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Test AWS EKS authentication
+      - name: Update kubeconfig for EKS
         run: |
-          aws eks get-token --cluster-name fiap-challenge-cluster --region ${{ secrets.AWS_DEFAULT_REGION }}
+          aws eks update-kubeconfig --region ${{ secrets.AWS_DEFAULT_REGION }} --name fiap-challenge-cluster
 
       - name: Terraform Init
         run: terraform init
